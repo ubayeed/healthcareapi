@@ -1,0 +1,6 @@
+@ClaraApi_HostAddress = http://localhost:5114
+
+GET {{ClaraApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
