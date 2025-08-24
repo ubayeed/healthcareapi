@@ -66,6 +66,13 @@ namespace ClaraApi.Controllers
         }
 
         [HttpGet]
+        [Route("pricings")]
+        public List<Model.Pricing> GetPricings()
+        {
+            return DBConnection.getAllPricings();
+        }
+
+        [HttpGet]
         [Route("search_providers")]
         //public List<Model.Pricing> GetProviders(int memberId, int cptcode, string? zip = null)
         public List<dynamic> GetProviders(int memberId, int cptcode, string? zip = null)

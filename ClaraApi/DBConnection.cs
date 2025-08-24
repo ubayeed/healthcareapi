@@ -270,12 +270,15 @@ namespace ClaraApi
                                 //Console.WriteLine($"ID: {id}, Name: {name}, Quantity: {quantity}");
                                 var dbItem = new Model.Pricing();
                                 dbItem.PayorId = reader.ParseIntValue("PayorId");
+                                dbItem.Payor = getAllPayors().FirstOrDefault(x => x.PayorId == dbItem.PayorId);
                                 dbItem.PriceValidUntil = reader.ParseDateValue("PriceValidUntil");
                                 dbItem.MaxPrice = reader.ParseDoubleValue("MaxPrice");
                                 dbItem.MinPrice = reader.ParseDoubleValue("MinPrice");
                                 dbItem.CPTCode = reader.ParseIntValue("CPTCode");
+                                dbItem.CPT = getAllCPTCodes().FirstOrDefault(x => x.CPTCode == dbItem.CPTCode);
                                 dbItem.PricingId = reader.ParseIntValue("PricingId");
                                 dbItem.ProviderId = reader.ParseIntValue("ProviderId");
+                                dbItem.Provider = getAllProviders().FirstOrDefault(x => x.ProviderId == dbItem.ProviderId);
                                 items.Add(dbItem);
                             }
                         }
