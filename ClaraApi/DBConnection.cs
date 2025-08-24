@@ -7,8 +7,10 @@ namespace ClaraApi
     public static class DBConnection
     {
         //private string connectionString = "Server=10.37.129.20:3306;Database=ClaraHack;User ID=sqladm;Password=Multiplan#1234;";
-        private static string connectionString = "Server=10.37.129.20;Database=ClaraHack;Uid=sqladm;Pwd=Multiplan#1234";
+        //private static string connectionString = "Server=10.37.129.20;Database=ClaraHack;Uid=sqladm;Pwd=Multiplan#1234";
+        //
 
+        private static string connectionString = "Server=sql5.freesqldatabase.com;Database=sql5795955;Uid=sql5795955;Pwd=dCJui88MYR";
         public static void Test()
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
