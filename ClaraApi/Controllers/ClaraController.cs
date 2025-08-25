@@ -23,11 +23,16 @@ namespace ClaraApi.Controllers
             return "Hello";
         }
 
+        /// <summary>
+        /// body part
+        /// </summary>
+        /// <param name="bodyPart">optional e.g. elbow, wrist etc.</param>
+        /// <returns></returns>
         [HttpGet]
-        [Route("cpts")]
-        public List<Model.CPT> GetCPTs()
+        [Route("cpts")]        
+        public List<Model.CPT> GetCPTs(string bodyPart = "")
         {
-            return DBConnection.getAllCPTCodes();
+            return !string.IsNullOrEmpty(bodyPart) ? DBConnection.getAllCPTCodes().Where(x => x.BodyPart.ToLower().Contains(bodyPart.ToLower())).ToList() : DBConnection.getAllCPTCodes();
         }
 
         [HttpGet]
