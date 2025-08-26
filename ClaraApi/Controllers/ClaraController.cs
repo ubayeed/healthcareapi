@@ -37,49 +37,49 @@ namespace ClaraApi.Controllers
 
         [HttpGet]
         [Route("members")]
-        public List<Model.Member> GetMembers()
+        public List<Model.Member> GetMembers(int id = 0)
         {
-            return DBConnection.getAllMembers();
+            return id > 0 ? DBConnection.getAllMembers().Where(x => x.MemberId == id).ToList() : DBConnection.getAllMembers();
         }
 
         [HttpGet]
         [Route("networks")]
-        public List<Model.Network> GetNetworks()
+        public List<Model.Network> GetNetworks(int id = 0)
         {
-            return DBConnection.getAllNetworks();
+            return id > 0 ? DBConnection.getAllNetworks().Where(x => x.NetworkId == id).ToList() : DBConnection.getAllNetworks();
         }
 
         [HttpGet]
         [Route("providers")]
-        public List<Model.Provider> GetProviders()
+        public List<Model.Provider> GetProviders(int id = 0)
         {
-            return DBConnection.getAllProviders();
+            return id > 0 ? DBConnection.getAllProviders().Where(x => x.ProviderId == id).ToList() : DBConnection.getAllProviders();
         }
 
         [HttpGet]
         [Route("providernetworks")]
-        public List<Model.ProviderNetwork> GetProviderNetorks()
+        public List<Model.ProviderNetwork> GetProviderNetorks(int id = 0)
         {
-            return DBConnection.getAllProviderNetworks();
+            return id > 0 ? DBConnection.getAllProviderNetworks().Where(x => x.ProviderId == id).ToList() : DBConnection.getAllProviderNetworks();
         }
 
         [HttpGet]
         [Route("payors")]
-        public List<Model.Payor> GetPayors()
+        public List<Model.Payor> GetPayors(int id = 0)
         {
-            return DBConnection.getAllPayors();
+            return id > 0 ? DBConnection.getAllPayors().Where(x => x.PayorId == id).ToList() : DBConnection.getAllPayors();
         }
 
         [HttpGet]
         [Route("pricings")]
-        public List<Model.Pricing> GetPricings()
+        public List<Model.Pricing> GetPricings(int id = 0)
         {
-            return DBConnection.getAllPricings();
+            return id > 0 ? DBConnection.getAllPricings().Where(x => x.PricingId == id).ToList() : DBConnection.getAllPricings();
         }
 
         [HttpGet]
         [Route("search_providers")]
-        //public List<Model.Pricing> GetProviders(int memberId, int cptcode, string? zip = null)
+        //public List<Model.Pricing> GetProviders(int id, int cptcode, string? zip = null)
         public List<dynamic> GetProviders(int memberId, int cptcode, string? zip = null)
         {
             var member = DBConnection.getAllMembers().Where(x => x.MemberId == memberId).SingleOrDefault();
