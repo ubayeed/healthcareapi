@@ -1,5 +1,6 @@
 ﻿using ClaraApi.Model;
 using MySql.Data.MySqlClient;
+using System.Collections.Generic;
 using System.Data;
 
 namespace ClaraApi
@@ -29,7 +30,14 @@ namespace ClaraApi
 
         public static List<Model.CPT> getAllCPTCodes()
         {
-            List<Model.CPT> items = new List<Model.CPT>();
+            List<Model.CPT>? items = new List<Model.CPT>();
+            items = (List<Model.CPT>?)MemoryCacher.GetValue("getAllCPTCodes");
+
+            if (items != null)
+                return items;
+            else
+                items = new List<CPT>();
+
             using (MySqlConnection cnn = new MySqlConnection(connectionString))
             {
                 try
@@ -62,14 +70,24 @@ namespace ClaraApi
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error: {ex.Message}");
-                }
+                }            
             }
-            return items;
+
+            MemoryCacher.Add("getAllCPTCodes", items ?? new List<CPT>(), DateTimeOffset.Now.AddHours(1));
+
+            return items ?? new List<CPT>();
         }
 
         public static List<Model.Member> getAllMembers()
         {
-            List<Model.Member> items = new List<Model.Member>();
+            List<Model.Member>? items = new List<Model.Member>();
+            items = (List<Model.Member>?)MemoryCacher.GetValue("getAllMembers");
+
+            if (items != null)
+                return items;
+            else
+                items = new List<Member>();
+
             using (MySqlConnection cnn = new MySqlConnection(connectionString))
             {
                 try
@@ -115,12 +133,22 @@ namespace ClaraApi
                     Console.WriteLine($"Error: {ex.Message}");
                 }
             }
-            return items;
+
+            MemoryCacher.Add("getAllMembers", items ?? new List<Member>(), DateTimeOffset.Now.AddHours(1));
+
+            return items ?? new List<Member>();
         }
 
         public static List<Model.Network> getAllNetworks()
         {
-            List<Model.Network> items = new List<Model.Network>();
+            List<Model.Network>? items = new List<Model.Network>();
+            items = (List<Model.Network>?)MemoryCacher.GetValue("getAllNetworks");
+
+            if (items != null)
+                return items;
+            else
+                items = new List<Network>();
+
             using (MySqlConnection cnn = new MySqlConnection(connectionString))
             {
                 try
@@ -151,14 +179,24 @@ namespace ClaraApi
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error: {ex.Message}");
-                }
+                }            
             }
-            return items;
+
+            MemoryCacher.Add("getAllNetworks", items ?? new List<Network>(), DateTimeOffset.Now.AddHours(1));
+
+            return items ?? new List<Network>();
         }
 
         public static List<Model.Provider> getAllProviders()
         {
-            List<Model.Provider> items = new List<Model.Provider>();
+            List<Model.Provider>? items = new List<Model.Provider>();
+            items = (List<Model.Provider>?)MemoryCacher.GetValue("getAllProviders");
+
+            if (items != null)
+                return items;
+            else
+                items = new List<Provider>();
+
             using (MySqlConnection cnn = new MySqlConnection(connectionString))
             {
                 try
@@ -203,12 +241,22 @@ namespace ClaraApi
                     Console.WriteLine($"Error: {ex.Message}");
                 }
             }
-            return items;
+
+            MemoryCacher.Add("getAllProviders", items ?? new List<Provider>(), DateTimeOffset.Now.AddHours(1));
+
+            return items ?? new List<Provider>();
         }
 
         public static List<Model.Payor> getAllPayors()
         {
-            List<Model.Payor> items = new List<Model.Payor>();
+            List<Model.Payor>? items = new List<Model.Payor>();
+            items = (List<Model.Payor>?)MemoryCacher.GetValue("getAllPayors");
+
+            if (items != null)
+                return items;
+            else
+                items = new List<Payor>();
+
             using (MySqlConnection cnn = new MySqlConnection(connectionString))
             {
                 try
@@ -244,57 +292,77 @@ namespace ClaraApi
                     Console.WriteLine($"Error: {ex.Message}");
                 }
             }
-            return items;
+
+            MemoryCacher.Add("getAllPayors", items ?? new List<Payor>(), DateTimeOffset.Now.AddHours(1));
+
+            return items ?? new List<Payor>();
         }
 
         public static List<Model.Pricing> getAllPricings()
         {
-            List<Model.Pricing> items = new List<Model.Pricing>();
+            List<Model.Pricing>? items = null;
+            items = (List<Model.Pricing>?)MemoryCacher.GetValue("getAllPricings");
+
+            if (items != null)
+                return items;
+            else
+                items = new List<Pricing>();
+
             using (MySqlConnection cnn = new MySqlConnection(connectionString))
-            {
-                try
                 {
-                    cnn.Open();
-                    //string query = "SELECT id, product_name, quantity FROM products WHERE product_name = @productName;";
-                    string query = "SELECT * from Pricing;";
-                    using (MySqlCommand cmd = new MySqlCommand(query, cnn))
+                    try
                     {
-                        //cmd.Parameters.AddWithValue("@productName", productName);
-                        using (MySqlDataReader reader = cmd.ExecuteReader())
+                        cnn.Open();
+                        //string query = "SELECT id, product_name, quantity FROM products WHERE product_name = @productName;";
+                        string query = "SELECT * from Pricing;";
+                        using (MySqlCommand cmd = new MySqlCommand(query, cnn))
                         {
-                            while (reader.Read())
+                            //cmd.Parameters.AddWithValue("@productName", productName);
+                            using (MySqlDataReader reader = cmd.ExecuteReader())
                             {
-                                //int id = reader.GetInt32("id");
-                                //string name = reader.GetString("product_name");
-                                //int quantity = reader.GetInt32("quantity");
-                                //Console.WriteLine($"ID: {id}, Name: {name}, Quantity: {quantity}");
-                                var dbItem = new Model.Pricing();
-                                dbItem.PayorId = reader.ParseIntValue("PayorId");
-                                dbItem.Payor = getAllPayors().FirstOrDefault(x => x.PayorId == dbItem.PayorId);
-                                dbItem.PriceValidUntil = reader.ParseDateValue("PriceValidUntil");
-                                dbItem.MaxPrice = reader.ParseDoubleValue("MaxPrice");
-                                dbItem.MinPrice = reader.ParseDoubleValue("MinPrice");
-                                dbItem.CPTCode = reader.ParseIntValue("CPTCode");
-                                dbItem.CPT = getAllCPTCodes().FirstOrDefault(x => x.CPTCode == dbItem.CPTCode);
-                                dbItem.PricingId = reader.ParseIntValue("PricingId");
-                                dbItem.ProviderId = reader.ParseIntValue("ProviderId");
-                                dbItem.Provider = getAllProviders().FirstOrDefault(x => x.ProviderId == dbItem.ProviderId);
-                                items.Add(dbItem);
+                                while (reader.Read())
+                                {
+                                    //int id = reader.GetInt32("id");
+                                    //string name = reader.GetString("product_name");
+                                    //int quantity = reader.GetInt32("quantity");
+                                    //Console.WriteLine($"ID: {id}, Name: {name}, Quantity: {quantity}");
+                                    var dbItem = new Model.Pricing();
+                                    dbItem.PayorId = reader.ParseIntValue("PayorId");
+                                    dbItem.Payor = getAllPayors().FirstOrDefault(x => x.PayorId == dbItem.PayorId);
+                                    dbItem.PriceValidUntil = reader.ParseDateValue("PriceValidUntil");
+                                    dbItem.MaxPrice = reader.ParseDoubleValue("MaxPrice");
+                                    dbItem.MinPrice = reader.ParseDoubleValue("MinPrice");
+                                    dbItem.CPTCode = reader.ParseIntValue("CPTCode");
+                                    dbItem.CPT = getAllCPTCodes().FirstOrDefault(x => x.CPTCode == dbItem.CPTCode);
+                                    dbItem.PricingId = reader.ParseIntValue("PricingId");
+                                    dbItem.ProviderId = reader.ParseIntValue("ProviderId");
+                                    dbItem.Provider = getAllProviders().FirstOrDefault(x => x.ProviderId == dbItem.ProviderId);
+                                    items.Add(dbItem);
+                                }
                             }
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error: {ex.Message}");
+                    }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error: {ex.Message}");
-                }
-            }
-            return items;
+
+            MemoryCacher.Add("getAllPricings", items ?? new List<Pricing>(), DateTimeOffset.Now.AddHours(1));
+
+            return items ?? new List<Pricing>();
         }
 
         public static List<Model.ProviderNetwork> getAllProviderNetworks()
         {
-            List<Model.ProviderNetwork> items = new List<Model.ProviderNetwork>();
+            List<Model.ProviderNetwork>? items = new List<Model.ProviderNetwork>();
+            items = (List<Model.ProviderNetwork>?)MemoryCacher.GetValue("getAllProviderNetworks");
+
+            if (items != null)
+                return items;
+            else
+                items = new List<ProviderNetwork>();
+
             using (MySqlConnection cnn = new MySqlConnection(connectionString))
             {
                 try
@@ -330,7 +398,9 @@ namespace ClaraApi
                     Console.WriteLine($"Error: {ex.Message}");
                 }
             }
-            return items;
+
+            MemoryCacher.Add("getAllProviderNetworks", items ?? new List<ProviderNetwork>(), DateTimeOffset.Now.AddHours(1));
+            return items ?? new List<ProviderNetwork>();
         }
 
         private static DateTime ParseDateValue(this MySqlDataReader reader, string colName)
